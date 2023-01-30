@@ -24,6 +24,7 @@ import yaml
 # Constants
 FILE = Path(__file__).resolve()
 ROOT = FILE.parents[2]  # YOLO
+SETTINGS_ROOT = Path() #
 DEFAULT_CFG_PATH = ROOT / "yolo/cfg/default.yaml"
 RANK = int(os.getenv('RANK', -1))
 NUM_THREADS = min(8, max(1, os.cpu_count() - 1))  # number of YOLOv5 multiprocessing threads
@@ -353,7 +354,7 @@ def get_user_config_dir(sub_dir='Ultralytics'):
     elif os_name == 'Darwin':  # macOS
         path = Path.home() / 'Library' / 'Application Support' / sub_dir
     elif os_name == 'Linux':
-        path = Path.home() / '.config' / sub_dir
+        path = SETTINGS_ROOT / '.config'
     else:
         raise ValueError(f'Unsupported operating system: {os_name}')
 
@@ -496,7 +497,7 @@ def get_settings(file=USER_CONFIG_DIR / 'settings.yaml', version='0.0.1'):
 
     git_dir = get_git_dir()
     root = git_dir or Path()
-    datasets_root = (root.parent if git_dir and is_dir_writeable(root.parent) else root).resolve()
+    datasets_root = root # keeps the dataset inside the root dir!
     defaults = {
         'datasets_dir': str(datasets_root / 'datasets'),  # default datasets directory.
         'weights_dir': str(root / 'weights'),  # default weights directory.

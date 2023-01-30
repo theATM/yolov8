@@ -211,6 +211,14 @@ class BaseTrainer:
                 SyntaxError('batch=-1 to use AutoBatch is only available in Single-GPU training. '
                             'Please pass a valid batch size value for Multi-GPU DDP training, i.e. batch=16')
 
+        # Freeze
+        freeze = [f'model.{x}.' for x in (self.args.freeze if type(self.args.freeze) is list else range(self.args.freeze))]  # layers to freeze
+        for k, v in self.model.named_parameters():
+            v.requires_grad = True  # train all layers
+            if any(x in k for x in freeze):
+                LOGGER.info(f'freezing {k}')
+                v.requires_grad = False
+
         # Optimizer
         self.accumulate = max(round(self.args.nbs / self.batch_size), 1)  # accumulate loss before optimizing
         self.args.weight_decay *= self.batch_size * self.accumulate / self.args.nbs  # scale weight_decay
@@ -239,15 +247,6 @@ class BaseTrainer:
             self.ema = ModelEMA(self.model)
         self.resume_training(ckpt)
         self.run_callbacks("on_pretrain_routine_end")
-		
-		# Freeze layers
-        freeze = [f'model.{x}.' for x in (self.args.freeze if type(self.args.freeze) is list else range(self.args.freeze))]  # layers to freeze
-        for k, v in self.model.named_parameters():
-            v.requires_grad = True  # train all layers
-            # v.register_hook(lambda x: torch.nan_to_num(x))  # NaN to 0 (commented for erratic training results)
-            if any(x in k for x in freeze):
-                LOGGER.info(f'freezing {k}')
-                v.requires_grad = False
 
     def _do_train(self, rank=-1, world_size=1):
         if world_size > 1:
