@@ -151,3 +151,4 @@ weights/
 *_openvino_model/
 *_paddle_model/
 .idea/
+.config/
