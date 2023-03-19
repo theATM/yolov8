@@ -6,7 +6,7 @@ print(os.getcwd())
 model_path = "./pretrained/yolov8s.pt" #"./runs/detect/train14/weights/best.pt" # "yolov8n.pt"
 model = YOLO(model_path) # load a pretrained model (recommended for training)
 # Use the model
-model.train(data="./rds-robo.yaml", epochs=200, batch=8, freeze=[10])  # train the model
+model.train(data="./rds-robo.yaml", epochs=200, batch=8, freeze=10,coco_annot='./datasets/RDS-ROBO/valid/instances_val.json',save_json=True)  # train the model
 #model.trainer.validator.metrics.metric <- for metrics
 #model.trainer.validator.metrics.metric
 results = model.val()  # evaluate model performance on the validation set
