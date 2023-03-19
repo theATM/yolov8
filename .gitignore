@@ -152,3 +152,10 @@ weights/
 *_paddle_model/
 .idea/
 .config/
+
+*.png
+*.jpg
+*.github
+*.circleci
+*.dev_scriptsmmcv/docs/en/community/contributing.md
+mmcv/docs/en/community/contributing.md
