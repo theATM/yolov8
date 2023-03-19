@@ -60,13 +60,22 @@ class DetectionValidator(BaseValidator):
         return ('%22s' + '%11s' * 6) % ('Class', 'Images', 'Instances', 'Box(P', "R", "mAP50", "mAP50-95)")
 
     def postprocess(self, preds):
-        preds = ops.non_max_suppression(preds,
-                                        self.args.conf,
-                                        self.args.iou,
-                                        labels=self.lb,
-                                        multi_label=True,
-                                        agnostic=self.args.single_cls,
-                                        max_det=self.args.max_det)
+        if self.args.cp_clustering:
+            preds = ops.cp_clustering(preds,
+                                            self.args.conf,
+                                            self.args.iou,
+                                            labels=self.lb,
+                                            multi_label=True,
+                                            agnostic=self.args.single_cls,
+                                            max_det=self.args.max_det)
+        else:
+            preds = ops.non_max_suppression(preds,
+                                            self.args.conf,
+                                            self.args.iou,
+                                            labels=self.lb,
+                                            multi_label=True,
+                                            agnostic=self.args.single_cls,
+                                            max_det=self.args.max_det)
         return preds
 
     def update_metrics(self, preds, batch):
