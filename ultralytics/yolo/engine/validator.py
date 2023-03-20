@@ -6,6 +6,10 @@ from pathlib import Path
 
 import torch
 from tqdm import tqdm
+from pycocotools.coco import COCO
+from pycocotools.cocoeval import COCOeval
+import sys
+import time
 
 from ultralytics.nn.autobackend import AutoBackend
 from ultralytics.yolo.cfg import get_cfg
@@ -60,6 +64,7 @@ class BaseValidator:
         self.training = True
         self.speed = None
         self.jdict = None
+        self.cocoGt = COCO(annotation_file=args.coco_annot)
 
         project = self.args.project or Path(SETTINGS['runs_dir']) / self.args.task
         name = self.args.name or f"{self.args.mode}"
@@ -70,7 +75,7 @@ class BaseValidator:
         if self.args.conf is None:
             self.args.conf = 0.001  # default conf=0.001
 
-        self.callbacks = defaultdict(list, {k: v for k, v in callbacks.default_callbacks.items()})  # add callbacks
+        self.callbacks = defaultdict(list, callbacks.default_callbacks)  # add callbacks
 
     @smart_inference_mode()
     def __call__(self, trainer=None, model=None):
@@ -163,6 +168,16 @@ class BaseValidator:
         self.print_results()
         self.speed = tuple(x.t / len(self.dataloader.dataset) * 1E3 for x in dt)  # speeds per image
         self.run_callbacks('on_val_end')
+
+        time.sleep(0.2)
+        cocoDt = self.cocoGt.loadRes(self.jdict)
+        E = COCOeval(self.cocoGt, cocoDt, iouType='bbox')
+        E.evaluate()
+        E.accumulate()
+        E.summarize()
+        print("Current AP: {:.5f}".format(E.stats[0]))
+        time.sleep(0.2)
+
         if self.training:
             model.float()
             results = {**stats, **trainer.label_loss_items(self.loss.cpu() / len(self.dataloader), prefix="val")}

@@ -85,7 +85,6 @@ class BaseTrainer:
         self.console = LOGGER
         self.validator = None
         self.model = None
-        self.callbacks = defaultdict(list)
         init_seeds(self.args.seed + 1 + RANK, deterministic=self.args.deterministic)
 
         # Dirs
@@ -141,7 +140,7 @@ class BaseTrainer:
         self.plot_idx = [0, 1, 2]
 
         # Callbacks
-        self.callbacks = defaultdict(list, {k: v for k, v in callbacks.default_callbacks.items()})  # add callbacks
+        self.callbacks = defaultdict(list, callbacks.default_callbacks)  # add callbacks
         if RANK in {0, -1}:
             callbacks.add_integration_callbacks(self)
 
@@ -212,9 +211,8 @@ class BaseTrainer:
                 SyntaxError('batch=-1 to use AutoBatch is only available in Single-GPU training. '
                             'Please pass a valid batch size value for Multi-GPU DDP training, i.e. batch=16')
 
-        # Freeze layers
-        freeze = [f'model.{x}.' for x in (self.args.freeze if type(self.args.freeze) is list else range(
-            self.args.freeze))]  # layers to freeze
+        # Freeze
+        freeze = [f'model.{x}.' for x in (self.args.freeze if type(self.args.freeze) is list else range(self.args.freeze))]  # layers to freeze
         for k, v in self.model.named_parameters():
             v.requires_grad = True  # train all layers
             if any(x in k for x in freeze):
