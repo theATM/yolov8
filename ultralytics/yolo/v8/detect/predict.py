@@ -21,15 +21,21 @@ class DetectionPredictor(BasePredictor):
         return img
 
     def postprocess(self, preds, img, orig_img, classes=None):
-        if self.args.cp_clustering:
+        if self.args.box_fusion == 'cp_clustering':
             preds = ops.cp_clustering(preds,
                                             self.args.conf,
                                             self.args.iou,
                                             agnostic=self.args.agnostic_nms,
                                             max_det=self.args.max_det,
                                             classes=self.args.classes)
-        else:
-
+        elif self.args.box_fusion == 'soft-nms':
+            preds = ops.soft_non_max_suppression(preds,
+                                            self.args.conf,
+                                            self.args.iou,
+                                            agnostic=self.args.agnostic_nms,
+                                            max_det=self.args.max_det,
+                                            classes=self.args.classes)
+        else: # nms
             preds = ops.non_max_suppression(preds,
                                             self.args.conf,
                                             self.args.iou,

@@ -37,7 +37,7 @@ from .modulated_deform_conv import (ModulatedDeformConv2d,
                                     ModulatedDeformConv2dPack,
                                     modulated_deform_conv2d)
 from .multi_scale_deform_attn import MultiScaleDeformableAttention
-from .nms import batched_nms, nms, nms_match, nms_rotated, soft_nms
+from .nms import batched_nms, nms, nms_match, nms_rotated, soft_nms, cpclustering
 from .pixel_group import pixel_group
 from .point_sample import (SimpleRoIAlign, point_sample,
                            rel_roi_point_to_rel_img_point)
@@ -77,7 +77,7 @@ __all__ = [
     'get_compiler_version', 'get_compiling_cuda_version',
     'get_onnxruntime_op_path', 'MaskedConv2d', 'masked_conv2d',
     'ModulatedDeformConv2d', 'ModulatedDeformConv2dPack',
-    'modulated_deform_conv2d', 'batched_nms', 'nms', 'soft_nms', 'nms_match',
+    'modulated_deform_conv2d', 'batched_nms', 'nms', 'soft_nms', 'cpclustering', 'nms_match',
     'RoIAlign', 'roi_align', 'RoIPool', 'roi_pool', 'SyncBatchNorm', 'Conv2d',
     'ConvTranspose2d', 'Linear', 'MaxPool2d', 'CrissCrossAttention', 'PSAMask',
     'point_sample', 'rel_roi_point_to_rel_img_point', 'SimpleRoIAlign',

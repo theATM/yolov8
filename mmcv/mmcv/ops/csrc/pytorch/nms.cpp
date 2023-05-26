@@ -45,6 +45,12 @@ Tensor nms(Tensor boxes, Tensor scores, float iou_threshold, int offset) {
 
 Tensor softnms(Tensor boxes, Tensor scores, Tensor dets, float iou_threshold,
                float sigma, float min_score, int method, int offset) {
+  return softnms_impl(boxes, scores, dets, iou_threshold, sigma, min_score,
+                      method, offset);
+}
+
+Tensor cpclustering(Tensor boxes, Tensor scores, Tensor dets, float iou_threshold,
+               float sigma, float min_score, int method, int offset) {
   // Borrow the "soft_nms_cpu" API by calling "cp_cluster_cpu" rather than orignal Soft-NMS implementations	
   //return softnms_impl(boxes, scores, dets, iou_threshold, sigma, min_score,
   //                    method, offset);

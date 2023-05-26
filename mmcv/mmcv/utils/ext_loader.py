@@ -21,6 +21,7 @@ else:
     has_return_value_ops = [
         'nms',
         'softnms',
+        'cpclustering',
         'nms_match',
         'nms_rotated',
         'top_pool_forward',

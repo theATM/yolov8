@@ -7,7 +7,7 @@ from mmcv.utils import deprecated_api_warning
 from ..utils import ext_loader
 
 ext_module = ext_loader.load_ext(
-    '_ext', ['nms', 'softnms', 'nms_match', 'nms_rotated'])
+    '_ext', ['nms', 'softnms', 'cpclustering', 'nms_match', 'nms_rotated'])
 
 
 # This function is modified from: https://github.com/pytorch/vision/
@@ -113,6 +113,42 @@ class SoftNMSop(torch.autograd.Function):
             offset_i=int(offset),
             outputs=2)
         return nms_out
+
+
+class CpClusteringop(torch.autograd.Function):
+
+    @staticmethod
+    def forward(ctx, boxes, scores, iou_threshold, sigma, min_score, method,
+                offset):
+        dets = boxes.new_empty((boxes.size(0), 5), device='cpu')
+        inds = ext_module.cpclustering(
+            boxes.cpu(),
+            scores.cpu(),
+            dets.cpu(),
+            iou_threshold=float(iou_threshold),
+            sigma=float(sigma),
+            min_score=float(min_score),
+            method=int(method),
+            offset=int(offset))
+        return dets, inds
+
+    @staticmethod
+    def symbolic(g, boxes, scores, iou_threshold, sigma, min_score, method,
+                 offset):
+        from packaging import version
+        assert version.parse(torch.__version__) >= version.parse('1.7.0')
+        nms_out = g.op(
+            'mmcv::CpClustering',
+            boxes,
+            scores,
+            iou_threshold_f=float(iou_threshold),
+            sigma_f=float(sigma),
+            min_score_f=float(min_score),
+            method_i=int(method),
+            offset_i=int(offset),
+            outputs=2)
+        return nms_out
+
 
 
 @deprecated_api_warning({'iou_thr': 'iou_threshold'})
@@ -248,6 +284,87 @@ def soft_nms(boxes,
         return dets, inds
     else:
         return dets.to(device=boxes.device), inds.to(device=boxes.device)
+
+
+@deprecated_api_warning({'iou_thr': 'iou_threshold'})
+def cpclustering(boxes,
+             scores,
+             iou_threshold=0.3,
+             sigma=0.5,
+             min_score=1e-3,
+             method='linear',
+             offset=0):
+    """Dispatch to only CPU Soft NMS implementations.
+
+    The input can be either a torch tensor or numpy array.
+    The returned type will always be the same as inputs.
+
+    Args:
+        boxes (torch.Tensor or np.ndarray): boxes in shape (N, 4).
+        scores (torch.Tensor or np.ndarray): scores in shape (N, ).
+        iou_threshold (float): IoU threshold for NMS.
+        sigma (float): hyperparameter for gaussian method
+        min_score (float): score filter threshold
+        method (str): either 'linear' or 'gaussian'
+        offset (int, 0 or 1): boxes' width or height is (x2 - x1 + offset).
+
+    Returns:
+        tuple: kept dets (boxes and scores) and indice, which always have
+        the same data type as the input.
+
+    Example:
+        >>> boxes = np.array([[4., 3., 5., 3.],
+        >>>                   [4., 3., 5., 4.],
+        >>>                   [3., 1., 3., 1.],
+        >>>                   [3., 1., 3., 1.],
+        >>>                   [3., 1., 3., 1.],
+        >>>                   [3., 1., 3., 1.]], dtype=np.float32)
+        >>> scores = np.array([0.9, 0.9, 0.5, 0.5, 0.4, 0.0], dtype=np.float32)
+        >>> iou_threshold = 0.6
+        >>> dets, inds = soft_nms(boxes, scores, iou_threshold, sigma=0.5)
+        >>> assert len(inds) == len(dets) == 5
+    """
+
+    assert isinstance(boxes, (torch.Tensor, np.ndarray))
+    assert isinstance(scores, (torch.Tensor, np.ndarray))
+    is_numpy = False
+    if isinstance(boxes, np.ndarray):
+        is_numpy = True
+        boxes = torch.from_numpy(boxes)
+    if isinstance(scores, np.ndarray):
+        scores = torch.from_numpy(scores)
+    assert boxes.size(1) == 4
+    assert boxes.size(0) == scores.size(0)
+    assert offset in (0, 1)
+    method_dict = {'naive': 0, 'linear': 1, 'gaussian': 2}
+    assert method in method_dict.keys()
+
+    if torch.__version__ == 'parrots':
+        dets = boxes.new_empty((boxes.size(0), 5), device='cpu')
+        indata_list = [boxes.cpu(), scores.cpu(), dets.cpu()]
+        indata_dict = {
+            'iou_threshold': float(iou_threshold),
+            'sigma': float(sigma),
+            'min_score': min_score,
+            'method': method_dict[method],
+            'offset': int(offset)
+        }
+        inds = ext_module.softnms(*indata_list, **indata_dict)
+    else:
+        dets, inds = CpClusteringop.apply(boxes.cpu(), scores.cpu(),
+                                     float(iou_threshold), float(sigma),
+                                     float(min_score), method_dict[method],
+                                     int(offset))
+
+    dets = dets[:inds.size(0)]
+
+    if is_numpy:
+        dets = dets.cpu().numpy()
+        inds = inds.cpu().numpy()
+        return dets, inds
+    else:
+        return dets.to(device=boxes.device), inds.to(device=boxes.device)
+
 
 
 def batched_nms(boxes, scores, idxs, nms_cfg, class_agnostic=False):

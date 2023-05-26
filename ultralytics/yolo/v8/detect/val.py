@@ -60,7 +60,7 @@ class DetectionValidator(BaseValidator):
         return ('%22s' + '%11s' * 6) % ('Class', 'Images', 'Instances', 'Box(P', "R", "mAP50", "mAP50-95)")
 
     def postprocess(self, preds):
-        if self.args.cp_clustering:
+        if self.args.box_fusion == 'cp_clustering':
             preds = ops.cp_clustering(preds,
                                             self.args.conf,
                                             self.args.iou,
@@ -68,7 +68,15 @@ class DetectionValidator(BaseValidator):
                                             multi_label=True,
                                             agnostic=self.args.single_cls,
                                             max_det=self.args.max_det)
-        else:
+        elif self.args.box_fusion == 'soft-nms':
+            preds = ops.soft_non_max_suppression(preds,
+                                            self.args.conf,
+                                            self.args.iou,
+                                            labels=self.lb,
+                                            multi_label=True,
+                                            agnostic=self.args.single_cls,
+                                            max_det=self.args.max_det)
+        else: # nms
             preds = ops.non_max_suppression(preds,
                                             self.args.conf,
                                             self.args.iou,
