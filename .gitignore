@@ -159,3 +159,6 @@ weights/
 *.circleci
 *.dev_scriptsmmcv/docs/en/community/contributing.md
 mmcv/docs/en/community/contributing.md
+
+log/*
+additions/notebook.ipynb
