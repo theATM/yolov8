@@ -35,6 +35,8 @@ RUN pip install --no-cache -e . albumentations comet thop pycocotools onnx onnx-
 # Set environment variables
 ENV OMP_NUM_THREADS=1
 
+#Set workdir
+WORKDIR /usr/project
 
 # Usage Examples -------------------------------------------------------------------------------------------------------
 
