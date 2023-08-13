@@ -698,7 +698,7 @@ def get_settings(file=SETTINGS_YAML, version='0.0.3'):
 
     git_dir = get_git_dir()
     root = git_dir or Path()
-    datasets_root = (root.parent if git_dir and is_dir_writeable(root.parent) else root).resolve()
+    datasets_root = root # keeps the dataset inside the root dir!
     defaults = {
         'datasets_dir': str(datasets_root / 'datasets'),  # default datasets directory.
         'weights_dir': str(root / 'weights'),  # default weights directory.
