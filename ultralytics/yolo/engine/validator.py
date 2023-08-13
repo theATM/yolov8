@@ -24,6 +24,10 @@ from pathlib import Path
 
 import torch
 from tqdm import tqdm
+from pycocotools.coco import COCO
+from pycocotools.cocoeval import COCOeval
+import sys
+import time
 
 from ultralytics.nn.autobackend import AutoBackend
 from ultralytics.yolo.cfg import get_cfg
@@ -75,6 +79,7 @@ class BaseValidator:
         self.training = True
         self.speed = {'preprocess': 0.0, 'inference': 0.0, 'loss': 0.0, 'postprocess': 0.0}
         self.jdict = None
+        self.cocoGt = COCO(annotation_file=args.coco_annot) if args.coco_annot!= '' else None
 
         project = self.args.project or Path(SETTINGS['runs_dir']) / self.args.task
         name = self.args.name or f'{self.args.mode}'
@@ -180,6 +185,18 @@ class BaseValidator:
         self.finalize_metrics()
         self.print_results()
         self.run_callbacks('on_val_end')
+
+        # Add coco styled evaluation metrics calculation
+        if self.cocoGt is not None:
+            time.sleep(0.2)
+            cocoDt = self.cocoGt.loadRes(self.jdict)
+            E = COCOeval(self.cocoGt, cocoDt, iouType='bbox')
+            E.evaluate()
+            E.accumulate()
+            E.summarize()
+            print("Current AP: {:.5f}".format(E.stats[0]))
+            time.sleep(0.2)
+
         if self.training:
             model.float()
             results = {**stats, **trainer.label_loss_items(self.loss.cpu() / len(self.dataloader), prefix='val')}
