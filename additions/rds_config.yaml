@@ -103,6 +103,7 @@ mosaic: 1.0  # image mosaic (probability)
 mixup: 0.0  # image mixup (probability)
 copy_paste: 0.0  # segment copy-paste (probability)
 freeze: 0 # freeze layers count
+box_fusion: 'cp_clustering' # choose between cp_clustering , soft-nms, nms
 
 # Custom config.yaml ---------------------------------------------------------------------------------------------------
 cfg:  # for overriding defaults.yaml
