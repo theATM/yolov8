@@ -1,0 +1,63 @@
+#docker build -t yolodocker -f DockerfileCustom .
+FROM pytorch/pytorch:2.0.0-cuda11.7-cudnn8-runtime
+RUN pip install --no-cache nvidia-tensorrt --index-url https://pypi.ngc.nvidia.com
+
+# Install linux packages
+# g++ required to build 'tflite_support' package
+RUN apt update \
+    && apt install --no-install-recommends -y gcc git zip curl htop libgl1-mesa-glx libglib2.0-0 libpython3-dev gnupg g++
+# RUN alias python=python3
+
+# Security updates
+# https://security.snyk.io/vuln/SNYK-UBUNTU1804-OPENSSL-3314796
+RUN apt upgrade --no-install-recommends -y openssl tar
+
+# Create working directory
+RUN mkdir -p /usr/yolo
+WORKDIR /usr/yolo
+
+# Pass all files to yolo in the runtime
+# If using systemlinks:
+	# Pass the dummy dataset to datasets/Name dir
+	# Pass the orignal images to datasets/Name/(test/train/valid)/images
+# else just pas the dataset to datasets/Name dir
+
+
+RUN apt-get install -y make gawk bison
+
+RUN apt-get install -y wget
+RUN wget -4c https://ftp.gnu.org/gnu/glibc/glibc-2.29.tar.gz
+RUN tar -zxvf glibc-2.29.tar.gz
+WORKDIR glibc-2.29
+RUN mkdir build_dir
+WORKDIR build_dir
+RUN ../configure --prefix=/opt/glibc
+RUN make
+RUN make install
+WORKDIR ../..
+
+
+# Copy contents
+COPY . /usr/yolo
+
+RUN git clone https://github.com/ultralytics/ultralytics /usr/yoloGit
+ADD https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8n.pt /usr/yoloGit
+
+
+# Install pip packages
+RUN python3 -m pip install --upgrade pip wheel
+RUN pip install --no-cache -e /usr/yoloGit albumentations comet thop pycocotools onnx onnx-simplifier onnxruntime-gpu
+
+
+
+#RUN python3 -m pip install -U openmim
+#RUN python3 -m mim install mmcv
+#RUN python3 -m pip install --upgrade pip wheel
+#RUN python3 -m pip install -r /usr/yolo/requirements.txt
+#RUN python3 -m pip install -r /usr/yolo/rr.txt
+
+RUN python3 -m pip install addict
+RUN python3 -m pip install yapf
+
+# Set environment variables
+ENV OMP_NUM_THREADS=1

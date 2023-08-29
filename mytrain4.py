@@ -1,7 +1,7 @@
 from ultralytics import YOLO
 
 # Load a model
-model = YOLO('yolov8s.yaml')
+model = YOLO("yolov8s.pt")
 #model = YOLO("runs/detect/train14/weights/best.pt") #YOLO("yolov8n.pt")  # load a pretrained model (recommended for training)
 
 # Use the model:
@@ -22,6 +22,6 @@ results = model.val(data="./datasets/RSD-YOLO/rds-yolo.yaml",save_json=True,plot
 
 
 # predict on test images
-#results = model("./datasets/RSD-YOLO-DOTANA-T/test/images/",data="./datasets/RSD-YOLO-DOTANA-T/rds-yolo-dotana-t.yaml",save=True)
+#results = model("./datasets/RSD-YOLO/test/images/",data="./datasets/RSD-YOLO/rds-yolo.yaml",save=True)
 
 #%%

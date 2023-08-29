@@ -35,6 +35,7 @@ RUN pip install --no-cache -e . albumentations comet thop pycocotools onnx onnx-
 # Set environment variables
 ENV OMP_NUM_THREADS=1
 
+RUN python3 -m pip install mmcv-full==1.5.2
 
 # Usage Examples -------------------------------------------------------------------------------------------------------
 

@@ -11,7 +11,7 @@ class DetectionPredictor(BasePredictor):
 
     def postprocess(self, preds, img, orig_imgs):
         """Postprocesses predictions and returns a list of Results objects."""
-		if self.args.box_fusion == 'cp_clustering':
+        if self.args.box_fusion == 'cp_clustering':
             preds = ops.cp_clustering(preds,
                                             self.args.conf,
                                             self.args.iou,
