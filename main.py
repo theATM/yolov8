@@ -3,7 +3,8 @@ from time import perf_counter, strftime
 ######################################### Main Training Script #######################################################
 
 # Insert dataset path (the yaml file):
-DATASET_YAML_PATH = "./datasets/RSD-YOLO/rds-yolo.yaml"
+#DATASET_YAML_PATH = "./datasets/RSD-YOLO/rds-yolo.yaml"
+DATASET_YAML_PATH = "./datasets/RSD-YOLO-DOTANA-T/rds-yolo-dotana-t.yaml"
 
 #Predict data path:
 PREDICT_DIR =  '/'.join(DATASET_YAML_PATH.split('/')[:-1]) + "/test/images/"
