@@ -9,7 +9,8 @@ DATASET_YAML_PATH = "./datasets/RSD-YOLO/rds-yolo.yaml"
 PREDICT_DIR =  '/'.join(DATASET_YAML_PATH.split('/')[:-1]) + "/test/images/"
 
 # Choose the model (config.yaml or pretrained weights.pt or a checkpoint.pt):
-MODEL_CONFIG = 'yolov8s.yaml' # "yolov8n.pt"
+#MODEL_CONFIG = 'yolov8s.yaml'
+MODEL_CONFIG =  "yolov8s.pt"
 
 ### HYPERPARAMETERS:
 EPOCHS = 100
