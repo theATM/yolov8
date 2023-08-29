@@ -1,3 +1,22 @@
+
+![yolo_baner](https://github.com/theATM/yolov8/assets/48883111/49206b82-7f24-49eb-ae4b-3e2e7bae4295)
+
+# YOLOv8 for the Remote Sensing Code
+This code is part of the Master thesis on Remote Sensing Object Detection. <br>
+It is a fork of the https://github.com/ultralytics/ultralytics Repository.
+
+Main changes to the original YOLOv8 setup are:
+* Usage of Remote Sensing Object Detection Dataset 
+<a href="https://github.com/Dr-Zhuang/geospatial-object-detection">RSD-GOD</a>
+* Usage of RSD-GOD + <a href="https://captain-whu.github.io/DOTA/dataset.html">DOTA</a>
+ hybrid dataset called Dotana
+* Experiments with the NMS substitute <a href="https://github.com/shenyi0220/CP-Cluster">CP-Cluster</a>
+and SoftNMS (mmcv custom build)
+* Experiments with different batch sizes, with frozen layers (yolov5 code) and with different optimizers
+
+
+# Original Ultralytics Readme
+
 <div align="center">
   <p>
     <a href="https://ultralytics.com/yolov8" target="_blank">
