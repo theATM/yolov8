@@ -21,6 +21,9 @@ Branches:
 * CP_Cluster_dev - Original_dev branch updated to the newer version 8.0.112, with multiple custom training pipelines
 * Freeze_old - depricated branch
 
+
+To run experiments on Yolov5 simply copy the RSD-GOD and Dotana .yaml configuration files to the <a href="https://github.com/ultralytics/yolov5">Yolov5</a> Repo.
+
 # Original Ultralytics Readme
 
 <div align="center">
