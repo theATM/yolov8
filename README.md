@@ -21,6 +21,15 @@ Branches:
 * CP_Cluster_dev - Original_dev branch updated to the newer version 8.0.112, with multiple custom training pipelines
 * Freeze_old - depricated branch
 
+### Yolov8 Usage
+🤖 Run the main.py script 😎
+
+The main.py scipt allows to:
+* Train the model on both RSD-GOD and Dotana datasets 🏋️
+* Evaluate pretrained models on both eval and test datasets 📏
+* Detect objects in the images from chosen folder 🔎
+
+
 ### Yolov5 Training
 
 To run experiments on Yolov5 simply copy the RSD-GOD and Dotana .yaml configuration files to the <a href="https://github.com/ultralytics/yolov5">Yolov5</a> Repo.
