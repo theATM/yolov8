@@ -15,7 +15,7 @@ from ultralytics.yolo.utils import LOGGER
 
 from .metrics import box_iou
 
-from mmcv.ops import soft_nms, nms, cpclustering
+from mmcv.ops import soft_nms, nms#, cpclustering
 
 class Profile(contextlib.ContextDecorator):
     """

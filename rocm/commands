@@ -1,0 +1,2 @@
+docker build -t yolo8 -f ./rocm/DockerRocm .
+
