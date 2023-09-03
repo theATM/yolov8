@@ -19,6 +19,7 @@ Branches:
 * Main - Clean Repository compatible with 8.0.112 version, training on the RSD and Dotana datasets done via Docker (dockerfile)
 * Original_dev - Fork of the version 8.0.21, added the freezing code and the cp-clustering
 * CP_Cluster_dev - Original_dev branch updated to the newer version 8.0.112, with multiple custom training pipelines
+* ROCm_dev - Branch used for the ROCm compatible training
 * Freeze_old - depricated branch
 
 ### Yolov8 Usage
