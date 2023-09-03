@@ -1,5 +1,6 @@
 from ultralytics import YOLO
 from time import perf_counter, strftime
+from datetime import datetime
 ######################################### Main Training Script #######################################################
 
 # Insert dataset path (the yaml file):
@@ -53,7 +54,7 @@ if PREDICT:
     results = model(PREDICT_DIR,data=DATASET_YAML_PATH,save=True,coco_annot=coco_annot)
 
 # Measure time
-end_time = strftime("%H:%M:%S", perf_counter() - start_time)
+end_time = datetime.fromtimestamp(perf_counter() - start_time).strftime("%H hours %M minutes %S seconds")
 print(f"Yolo Script concluded without a fuss. It took {end_time}. Have a nice day! 😄")
 
 
