@@ -55,7 +55,7 @@ To predict on images run detect.py --weights mymodels/best.pt --source dir_with_
 ![image](https://github.com/theATM/yolov8/assets/48883111/997f5c6b-b6c4-4f5e-b9c5-88f9da2971cd)
 
 
-#### Per class results
+#### Detection Results of the Best YOLOv8 model
 |  Airbase  | Helicopters |Oiltanks|Planes|Warships|
 |-|-|-|-|-|
 | ![image](https://github.com/theATM/yolov8/assets/48883111/31848fbd-c522-4616-ae26-0e90fba7d66c) | ![image](https://github.com/theATM/yolov8/assets/48883111/18de31f3-86ee-489e-9a4a-d87541413d2d) | ![image](https://github.com/theATM/yolov8/assets/48883111/7f7c777a-11b1-4b6d-b1cc-dc2a367fbb7a) | ![image](https://github.com/theATM/yolov8/assets/48883111/2012d5f7-2567-4adb-af11-890f1ec78d3e) | ![image](https://github.com/theATM/yolov8/assets/48883111/c45b26f6-bb2e-4869-8f3f-1d26cff667a3) |
