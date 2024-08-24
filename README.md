@@ -2,7 +2,7 @@
 ![yolo_baner](https://github.com/theATM/yolov8/assets/48883111/49206b82-7f24-49eb-ae4b-3e2e7bae4295)
 
 # YOLOv8 for the Remote Sensing Code
-This code is part of the Master thesis on Remote Sensing Object Detection. <br>
+This code is part of the Master thesis on Remote Sensing Object Detection [REPO](https://github.com/theATM/AirDetection). <br>
 It is a fork of the https://github.com/ultralytics/ultralytics Repository.
 
 Main changes to the original YOLOv8 setup are:
